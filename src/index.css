@@ -1,13 +1,67 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* If using Tailwind, include its directives:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*/
+
+/* Gold slider using color #AA8355 */
+.slider-thumb-gold[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+}
+.slider-thumb-gold[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background-color: #AA8355;
+  border-radius: 2px;
+}
+.slider-thumb-gold[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  background-color: #AA8355;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  margin-top: -7px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+}
+.slider-thumb-gold[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  background-color: #AA8355;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Silver slider */
+.slider-thumb-silver[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+}
+.slider-thumb-silver[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background-color: #C0C0C0;
+  border-radius: 2px;
+}
+.slider-thumb-silver[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  background-color: #C0C0C0;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  margin-top: -7px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+}
+.slider-thumb-silver[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  background-color: #C0C0C0;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
 }
