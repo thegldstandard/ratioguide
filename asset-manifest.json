@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ratioguide/static/css/main.fe8c2b3e.css",
+    "main.js": "/ratioguide/static/js/main.b8ae08ba.js",
+    "index.html": "/ratioguide/index.html",
+    "main.fe8c2b3e.css.map": "/ratioguide/static/css/main.fe8c2b3e.css.map",
+    "main.b8ae08ba.js.map": "/ratioguide/static/js/main.b8ae08ba.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fe8c2b3e.css",
+    "static/js/main.b8ae08ba.js"
+  ]
+}
