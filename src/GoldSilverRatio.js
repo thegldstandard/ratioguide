@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ComposedChart,
   XAxis,
@@ -25,6 +25,14 @@ function GoldSilverRatio() {
 
   const [ratioLock, setRatioLock] = useState(false);
   const [lockedRatio, setLockedRatio] = useState(goldPrice / silverPrice);
+
+  // Responsive state: determine if mobile view (width < 600px)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 600);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Slider boundaries based on selected unit.
   const minGold = unit === "oz" ? 500 : 16;
@@ -179,24 +187,25 @@ function GoldSilverRatio() {
     padding: "20px",
     display: "flex",
     gap: "20px",
+    flexDirection: isMobile ? "column" : "row"
   };
 
   const leftPaneStyle = {
-    width: "50%",
+    width: isMobile ? "100%" : "50%",
     display: "flex",
     flexDirection: "column",
-    gap: "20px",
+    gap: "20px"
   };
 
   const rightPaneStyle = {
-    width: "50%",
-    height: "500px",
+    width: isMobile ? "100%" : "50%",
+    height: isMobile ? "300px" : "500px",
     background: "#183965",
-    borderRadius: "4px",
+    borderRadius: "4px"
   };
 
   const rowStyle = { marginBottom: "20px" };
-  const labelStyle = { display: "inline-block", marginBottom: "5px", fontSize: "20px" };
+  const labelStyle = { display: "inline-block", marginBottom: "5px", fontSize: "14px" };
 
   const inputBoxStyle = {
     width: "80px",
@@ -207,7 +216,7 @@ function GoldSilverRatio() {
     color: "black",
     border: "1px solid #AAA",
     borderRadius: "4px",
-    padding: "2px 5px",
+    padding: "2px 5px"
   };
 
   const dropdownStyle = {
@@ -218,14 +227,14 @@ function GoldSilverRatio() {
     color: "black",
     border: "1px solid #AAA",
     borderRadius: "4px",
-    padding: "2px 5px",
+    padding: "2px 5px"
   };
 
   const topControlsStyle = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: "10px",
+    marginBottom: "10px"
   };
 
   const ratioBoxStyle = {
@@ -235,32 +244,32 @@ function GoldSilverRatio() {
     border: "1px solid white",
     background: "#183965",
     padding: "3px 5px",
-    display: "inline-block", // Shrinks the box to fit its content
-    width: "150px"      // Ensures the box only takes up as much space as needed
+    display: "inline-block",
+    width: "150px"
   };
 
   const hrStyle = {
     border: "1px solid rgba(255,255,255,0.3)",
-    margin: "20px 0",
+    margin: "20px 0"
   };
 
   const whatToBuyHeadingStyle = {
     textAlign: "center",
     fontSize: "20px",
     fontWeight: "bold",
-    marginBottom: "10px",
+    marginBottom: "10px"
   };
 
   const buySectionStyle = {
     display: "flex",
-    justifyContent: "space-evenly",
+    justifyContent: "space-evenly"
   };
 
   return (
     <div style={containerStyle}>
       <div style={leftPaneStyle}>
         <div>
-          <h2 style={{ textAlign: "center", marginBottom: "20px", fontSize: "20px", fontWeight: "bold" }}>
+          <h2 style={{ textAlign: "center", marginBottom: "20px", fontSize: "18px", fontWeight: "bold" }}>
             Gold / Silver Ratio
           </h2>
           <div style={topControlsStyle}>
@@ -281,7 +290,7 @@ function GoldSilverRatio() {
               <option value="g">g</option>
             </select>
             <div style={{ marginLeft: "10px", display: "flex", alignItems: "center" }}>
-              <label style={{ fontSize: "20px", marginRight: "5px" }}>Lock Ratio:</label>
+              <label style={{ fontSize: "14px", marginRight: "5px" }}>Lock Ratio:</label>
               <input
                 type="checkbox"
                 checked={ratioLock}
@@ -349,10 +358,10 @@ function GoldSilverRatio() {
             <defs>
               <linearGradient id="ratioGradient" x1="0" y1="1" x2="0" y2="0">
                 {/* Gold part now matches #AA8355 */}
-                <stop offset="0%" stopColor="rgba(170,131,85,0.8)" />
-                <stop offset="25%" stopColor="rgba(170,131,85,0.8)" />
-                <stop offset="58.33%" stopColor="rgba(192,192,192,0.8)" />
-                <stop offset="100%" stopColor="rgba(192,192,192,0.8)" />
+                <stop offset="0%" stopColor="rgba(170,131,85,0.4)" />
+                <stop offset="25%" stopColor="rgba(170,131,85,0.4)" />
+                <stop offset="58.33%" stopColor="rgba(192,192,192,0.4)" />
+                <stop offset="100%" stopColor="rgba(192,192,192,0.4)" />
               </linearGradient>
             </defs>
             <ReferenceArea x1={0} x2={1} y1={10} y2={130} fill="white" />
@@ -390,8 +399,9 @@ function GoldSilverRatio() {
               label={{
                 value: "GOLD",
                 position: "center",
-                fill: "#be9c46",
-                style: { fontSize: 48, fontWeight: "bold" },
+                // Change label color to match the gold box (#AA8355)
+                fill: "#AA8355",
+                style: { fontSize: 48, fontWeight: "bold" }
               }}
             />
             <ReferenceLine
@@ -400,8 +410,8 @@ function GoldSilverRatio() {
               label={{
                 value: "SILVER",
                 position: "center",
-                fill: "rgba(0,0,0,0.3)",
-                style: { fontSize: 48, fontWeight: "bold" },
+                fill: "rgba(0,0,0,0.15)",
+                style: { fontSize: 48, fontWeight: "bold" }
               }}
             />
             <ReferenceLine
@@ -412,7 +422,7 @@ function GoldSilverRatio() {
                 value: `Ratio ${ratio.toFixed(2)}`,
                 position: "center",
                 fill: "black",
-                dy: ratio >= 120 ? 10 : -10,
+                dy: ratio >= 120 ? 10 : -10
               }}
             />
           </ComposedChart>
@@ -429,7 +439,7 @@ function BuySection({ ratio }) {
   const buySectionStyle = {
     display: "flex",
     justifyContent: "space-evenly",
-    marginTop: "10px",
+    marginTop: "10px"
   };
   const goldBoxStyle = {
     background: "#AA8355",
@@ -440,7 +450,7 @@ function BuySection({ ratio }) {
     fontFamily: "'DM Serif Display', serif",
     fontSize: "20px",
     color: "black",
-    border: "1px solid #AAA",
+    border: "1px solid #AAA"
   };
   const silverBoxStyle = {
     background: "#C0C0C0",
@@ -451,7 +461,7 @@ function BuySection({ ratio }) {
     fontFamily: "'DM Serif Display', serif",
     fontSize: "20px",
     color: "black",
-    border: "1px solid #AAA",
+    border: "1px solid #AAA"
   };
 
   return (
