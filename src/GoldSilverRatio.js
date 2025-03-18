@@ -26,10 +26,12 @@ function GoldSilverRatio() {
   const [ratioLock, setRatioLock] = useState(false);
   const [lockedRatio, setLockedRatio] = useState(goldPrice / silverPrice);
 
-  // Responsive state: determine if mobile view (width < 600px)
+  // Detect if mobile (screen width < 600px)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 600);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -167,11 +169,8 @@ function GoldSilverRatio() {
   // Chart data for area fill.
   const chartData = [
     { ratioVal: 10, x: 0 },
-    { ratioVal: 130, x: 1 },
+    { ratioVal: 130, x: 1 }
   ];
-
-  const ratioLabelDY = ratio >= 120 ? 10 : -10;
-  const { gold: goldBuy, silver: silverBuy } = getBuyDistribution(ratio);
 
   // STYLES
 
@@ -186,8 +185,8 @@ function GoldSilverRatio() {
     boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
     padding: "20px",
     display: "flex",
-    gap: "20px",
-    flexDirection: isMobile ? "column" : "row"
+    flexDirection: isMobile ? "column" : "row",
+    gap: "20px"
   };
 
   const leftPaneStyle = {
@@ -260,12 +259,11 @@ function GoldSilverRatio() {
     marginBottom: "10px"
   };
 
-  const buySectionStyle = {
-    display: "flex",
-    justifyContent: "space-evenly"
-  };
+  // For Desktop: ratio controls + "What to Buy" on the left, chart on the right
+  // For Mobile: ratio controls on top, chart in the middle, "What to Buy" at the bottom
 
-  return (
+  // Desktop Layout
+  const desktopLayout = (
     <div style={containerStyle}>
       <div style={leftPaneStyle}>
         <div>
@@ -341,7 +339,6 @@ function GoldSilverRatio() {
               className="slider-thumb-silver w-full"
             />
           </div>
-          {/* Ratio Display centered above the "What to Buy" text */}
           <div style={{ textAlign: "center" }}>
             <div style={ratioBoxStyle}>
               Ratio: <strong>{(goldPrice / silverPrice).toFixed(2)}</strong>
@@ -352,83 +349,193 @@ function GoldSilverRatio() {
           <BuySection ratio={ratio} />
         </div>
       </div>
+
       <div style={rightPaneStyle}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData}>
-            <defs>
-              <linearGradient id="ratioGradient" x1="0" y1="1" x2="0" y2="0">
-                {/* Gold part now matches #AA8355 */}
-                <stop offset="0%" stopColor="rgba(170,131,85,0.4)" />
-                <stop offset="25%" stopColor="rgba(170,131,85,0.4)" />
-                <stop offset="58.33%" stopColor="rgba(192,192,192,0.4)" />
-                <stop offset="100%" stopColor="rgba(192,192,192,0.4)" />
-              </linearGradient>
-            </defs>
-            <ReferenceArea x1={0} x2={1} y1={10} y2={130} fill="white" />
-            <XAxis
-              dataKey="x"
-              type="number"
-              domain={[0, 1]}
-              axisLine={{ stroke: "black" }}
-              tickLine={{ stroke: "black" }}
-              hide={true}
-            />
-            <YAxis
-              dataKey="ratioVal"
-              type="number"
-              domain={[10, 130]}
-              ticks={[10,20,30,40,50,60,70,80,90,100,110,120,130]}
-              axisLine={{ stroke: "black" }}
-              tickLine={{ stroke: "black" }}
-              tick={{ fill: "white" }}
-            />
-            <CartesianGrid horizontal={false} vertical={false} />
-            <Area
-              type="stepBefore"
-              dataKey="ratioVal"
-              stroke="none"
-              fill="url(#ratioGradient)"
-              fillOpacity={1}
-            />
-            <ReferenceLine y={40} stroke="black" strokeDasharray="3 3" />
-            <ReferenceLine y={60} stroke="black" strokeDasharray="3 3" />
-            <ReferenceLine y={80} stroke="black" strokeDasharray="3 3" />
-            <ReferenceLine
-              y={25}
-              stroke="none"
-              label={{
-                value: "GOLD",
-                position: "center",
-                // Change label color to match the gold box (#AA8355)
-                fill: "#AA8355",
-                style: { fontSize: 48, fontWeight: "bold" }
-              }}
-            />
-            <ReferenceLine
-              y={105}
-              stroke="none"
-              label={{
-                value: "SILVER",
-                position: "center",
-                fill: "rgba(0,0,0,0.15)",
-                style: { fontSize: 48, fontWeight: "bold" }
-              }}
-            />
-            <ReferenceLine
-              y={ratio}
-              stroke="black"
-              strokeWidth={2}
-              label={{
-                value: `Ratio ${ratio.toFixed(2)}`,
-                position: "center",
-                fill: "black",
-                dy: ratio >= 120 ? 10 : -10
-              }}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+        <ChartComponent ratio={ratio} chartData={chartData} />
       </div>
     </div>
+  );
+
+  // Mobile Layout
+  const mobileLayout = (
+    <div style={containerStyle}>
+      {/* Ratio Controls */}
+      <div style={{ width: "100%", marginBottom: "20px" }}>
+        <h2 style={{ textAlign: "center", marginBottom: "20px", fontSize: "18px", fontWeight: "bold" }}>
+          Gold / Silver Ratio
+        </h2>
+        <div style={topControlsStyle}>
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            style={dropdownStyle}
+          >
+            <option value="$">$</option>
+            <option value="€">€</option>
+          </select>
+          <select
+            value={unit}
+            onChange={(e) => handleUnitChange(e.target.value)}
+            style={dropdownStyle}
+          >
+            <option value="oz">oz</option>
+            <option value="g">g</option>
+          </select>
+          <div style={{ marginLeft: "10px", display: "flex", alignItems: "center" }}>
+            <label style={{ fontSize: "14px", marginRight: "5px" }}>Lock Ratio:</label>
+            <input
+              type="checkbox"
+              checked={ratioLock}
+              onChange={handleLockToggle}
+              style={{ transform: "scale(1.2)" }}
+            />
+          </div>
+        </div>
+        <div style={rowStyle}>
+          <label style={labelStyle}>Gold Price ({currency}/{unit})</label>
+          <br />
+          <input
+            type="text"
+            value={goldInput}
+            onChange={(e) => handleGoldInputChange(e.target.value)}
+            onBlur={handleGoldBlur}
+            style={inputBoxStyle}
+          />
+          <br />
+          <input
+            type="range"
+            min={minGold}
+            max={maxGold}
+            step={goldStep}
+            value={goldPrice}
+            onChange={(e) => handleGoldSlider(e.target.value)}
+            className="slider-thumb-gold w-full"
+          />
+        </div>
+        <div style={rowStyle}>
+          <label style={labelStyle}>Silver Price ({currency}/{unit})</label>
+          <br />
+          <input
+            type="text"
+            value={silverInput}
+            onChange={(e) => handleSilverInputChange(e.target.value)}
+            onBlur={handleSilverBlur}
+            style={inputBoxStyle}
+          />
+          <br />
+          <input
+            type="range"
+            min={minSilver}
+            max={maxSilver}
+            step={silverStep}
+            value={silverPrice}
+            onChange={(e) => handleSilverSlider(e.target.value)}
+            className="slider-thumb-silver w-full"
+          />
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <div style={ratioBoxStyle}>
+            Ratio: <strong>{(goldPrice / silverPrice).toFixed(2)}</strong>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div style={{ width: "100%", height: "300px", marginBottom: "20px" }}>
+        <ChartComponent ratio={ratio} chartData={chartData} />
+      </div>
+
+      {/* What to Buy */}
+      <div style={{ width: "100%" }}>
+        <hr style={hrStyle} />
+        <div style={whatToBuyHeadingStyle}>What to Buy</div>
+        <BuySection ratio={ratio} />
+      </div>
+    </div>
+  );
+
+  return isMobile ? mobileLayout : desktopLayout;
+}
+
+// Chart is identical for mobile + desktop, so we factor it out
+function ChartComponent({ ratio, chartData }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <ComposedChart data={chartData}>
+        <defs>
+          <linearGradient id="ratioGradient" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="rgba(170,131,85,0.4)" />
+            <stop offset="25%" stopColor="rgba(170,131,85,0.4)" />
+            <stop offset="58.33%" stopColor="rgba(192,192,192,0.4)" />
+            <stop offset="100%" stopColor="rgba(192,192,192,0.4)" />
+          </linearGradient>
+        </defs>
+
+        <ReferenceArea x1={0} x2={1} y1={10} y2={130} fill="white" />
+        <XAxis
+          dataKey="x"
+          type="number"
+          domain={[0, 1]}
+          axisLine={{ stroke: "black" }}
+          tickLine={{ stroke: "black" }}
+          hide={true}
+        />
+        <YAxis
+          dataKey="ratioVal"
+          type="number"
+          domain={[10, 130]}
+          ticks={[10,20,30,40,50,60,70,80,90,100,110,120,130]}
+          axisLine={{ stroke: "black" }}
+          tickLine={{ stroke: "black" }}
+          tick={{ fill: "white" }}
+        />
+        <CartesianGrid horizontal={false} vertical={false} />
+        <Area
+          type="stepBefore"
+          dataKey="ratioVal"
+          stroke="none"
+          fill="url(#ratioGradient)"
+          fillOpacity={1}
+        />
+        <ReferenceLine y={40} stroke="black" strokeDasharray="3 3" />
+        <ReferenceLine y={60} stroke="black" strokeDasharray="3 3" />
+        <ReferenceLine y={80} stroke="black" strokeDasharray="3 3" />
+
+        {/* GOLD label */}
+        <ReferenceLine
+          y={25}
+          stroke="none"
+          label={{
+            value: "GOLD",
+            position: "center",
+            fill: "#AA8355",
+            style: { fontSize: 48, fontWeight: "bold" }
+          }}
+        />
+        {/* SILVER label, now a solid color (#C0C0C0) instead of semi-transparent */}
+        <ReferenceLine
+          y={105}
+          stroke="none"
+          label={{
+            value: "SILVER",
+            position: "center",
+            fill: "#C0C0C0",
+            style: { fontSize: 48, fontWeight: "bold" }
+          }}
+        />
+        <ReferenceLine
+          y={ratio}
+          stroke="black"
+          strokeWidth={2}
+          label={{
+            value: `Ratio ${ratio.toFixed(2)}`,
+            position: "center",
+            fill: "black",
+            dy: ratio >= 120 ? 10 : -10
+          }}
+        />
+      </ComposedChart>
+    </ResponsiveContainer>
   );
 }
 
