@@ -29,9 +29,7 @@ function GoldSilverRatio() {
   // Detect if mobile (screen width < 600px)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 600);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth < 600);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -259,9 +257,6 @@ function GoldSilverRatio() {
     marginBottom: "10px"
   };
 
-  // For Desktop: ratio controls + "What to Buy" on the left, chart on the right
-  // For Mobile: ratio controls on top, chart in the middle, "What to Buy" at the bottom
-
   // Desktop Layout
   const desktopLayout = (
     <div style={containerStyle}>
@@ -351,7 +346,7 @@ function GoldSilverRatio() {
       </div>
 
       <div style={rightPaneStyle}>
-        <ChartComponent ratio={ratio} chartData={chartData} />
+        <ChartComponent ratio={ratio} chartData={chartData} isMobile={isMobile} />
       </div>
     </div>
   );
@@ -442,7 +437,7 @@ function GoldSilverRatio() {
 
       {/* Chart */}
       <div style={{ width: "100%", height: "300px", marginBottom: "20px" }}>
-        <ChartComponent ratio={ratio} chartData={chartData} />
+        <ChartComponent ratio={ratio} chartData={chartData} isMobile={isMobile} />
       </div>
 
       {/* What to Buy */}
@@ -457,8 +452,12 @@ function GoldSilverRatio() {
   return isMobile ? mobileLayout : desktopLayout;
 }
 
-// Chart is identical for mobile + desktop, so we factor it out
-function ChartComponent({ ratio, chartData }) {
+// Chart is factored out for clarity
+function ChartComponent({ ratio, chartData, isMobile }) {
+  // We define large vs. small label styles for "GOLD" and "SILVER"
+  const largeLabelStyle = { fontSize: 48, fontWeight: "bold" };
+  const smallLabelStyle = { fontSize: 24, fontWeight: "bold" };
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart data={chartData}>
@@ -509,10 +508,10 @@ function ChartComponent({ ratio, chartData }) {
             value: "GOLD",
             position: "center",
             fill: "#AA8355",
-            style: { fontSize: 48, fontWeight: "bold" }
+            style: isMobile ? smallLabelStyle : largeLabelStyle
           }}
         />
-        {/* SILVER label, now a solid color (#C0C0C0) instead of semi-transparent */}
+        {/* SILVER label in solid color, also smaller on mobile */}
         <ReferenceLine
           y={105}
           stroke="none"
@@ -520,7 +519,7 @@ function ChartComponent({ ratio, chartData }) {
             value: "SILVER",
             position: "center",
             fill: "#C0C0C0",
-            style: { fontSize: 48, fontWeight: "bold" }
+            style: isMobile ? smallLabelStyle : largeLabelStyle
           }}
         />
         <ReferenceLine
