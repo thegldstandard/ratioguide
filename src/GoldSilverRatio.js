@@ -340,7 +340,7 @@ function GoldSilverRatio() {
             </div>
           </div>
           <hr style={hrStyle} />
-          <div style={whatToBuyHeadingStyle}>What to Buy</div>
+          <div style={whatToBuyHeadingStyle}>What we buy</div>
           <BuySection ratio={ratio} />
         </div>
       </div>
