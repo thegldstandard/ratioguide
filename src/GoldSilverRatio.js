@@ -440,10 +440,10 @@ function GoldSilverRatio() {
         <ChartComponent ratio={ratio} chartData={chartData} isMobile={isMobile} />
       </div>
 
-      {/* What to Buy */}
+      {/* What we buy */}
       <div style={{ width: "100%" }}>
         <hr style={hrStyle} />
-        <div style={whatToBuyHeadingStyle}>What to Buy</div>
+        <div style={whatToBuyHeadingStyle}>What we buy</div>
         <BuySection ratio={ratio} />
       </div>
     </div>
